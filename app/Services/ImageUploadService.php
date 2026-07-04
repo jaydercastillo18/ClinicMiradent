@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Services;
+
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Format;
+
+class ImageUploadService
+{
+    /**
+     * Sube y procesa una imagen, devolviendo la ruta pública.
+     *
+     * @param UploadedFile $file Archivo subido
+     * @param string $directory Directorio de destino relativo a public (e.g. 'uploads/instalaciones')
+     * @param int $maxWidth Ancho máximo al que se redimensionará
+     * @param int $quality Calidad de compresión WebP
+     * @return string Ruta relativa (e.g. 'uploads/instalaciones/foto.webp')
+     */
+    public function upload(UploadedFile $file, string $directory, int $maxWidth = 1200, int $quality = 80): string
+    {
+        $uploadPath = public_path($directory);
+
+        if (!File::isDirectory($uploadPath)) {
+            File::makeDirectory($uploadPath, 0755, true, true);
+        }
+
+        $fileName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
+
+        return $this->uploadCustomName($file, $directory, $fileName, $maxWidth, $quality);
+    }
+
+    /**
+     * Sube y procesa una imagen usando un nombre de archivo personalizado.
+     *
+     * @param UploadedFile $file Archivo subido
+     * @param string $directory Directorio de destino relativo a public
+     * @param string $fileName Nombre de archivo completo (e.g. 'avatar.jpg')
+     * @param int $maxWidth Ancho máximo al que se redimensionará
+     * @param int $quality Calidad de compresión
+     * @return string Ruta relativa (e.g. 'uploads/doctora/avatar.jpg')
+     */
+    public function uploadCustomName(UploadedFile $file, string $directory, string $fileName, int $maxWidth = 1200, int $quality = 80): string
+    {
+        $uploadPath = public_path($directory);
+
+        if (!File::isDirectory($uploadPath)) {
+            File::makeDirectory($uploadPath, 0755, true, true);
+        }
+
+        $format = Str::endsWith(strtolower($fileName), ['.jpg', '.jpeg']) ? Format::JPEG : Format::WEBP;
+
+        $manager = new ImageManager(new Driver());
+        $image = $manager->decode($file->getRealPath());
+        $image->scaleDown(width: $maxWidth);
+        $image->encodeUsingFormat($format, $quality)->save($uploadPath . '/' . $fileName);
+
+        return $directory . '/' . $fileName;
+    }
+
+    /**
+     * Elimina una imagen del almacenamiento público.
+     *
+     * @param string|null $path Ruta relativa a public
+     * @return void
+     */
+    public function delete(?string $path): void
+    {
+        if (!$path) {
+            return;
+        }
+
+        $oldFilePath = public_path($path);
+
+        if (File::exists($oldFilePath)) {
+            File::delete($oldFilePath);
+        }
+    }
+}
