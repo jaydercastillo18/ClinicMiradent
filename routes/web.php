@@ -1,6 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+
+Route::get('/debug-db', function () {
+    try {
+        DB::connection()->getPdo();
+        return "Conexión a la base de datos exitosa.";
+    } catch (\Exception $e) {
+        return "Error de base de datos: " . $e->getMessage() . " | " . $e->getFile() . " linea " . $e->getLine();
+    }
+});
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PacientesController;
