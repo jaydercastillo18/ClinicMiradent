@@ -1,5 +1,10 @@
 import axios from 'axios';
 
+// Ensure Laravel detects all requests as JSON/AJAX so controllers
+// return JSON responses instead of redirects.
+axios.defaults.headers.common['Accept'] = 'application/json';
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
 function showMiradentAlert(message, type = 'success') {
     const main = document.querySelector('.content-main');
 

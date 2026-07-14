@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DoctoraConfigRequest;
 use App\Http\Requests\DoctoraProfileRequest;
 use App\Models\Doctora;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
@@ -125,9 +126,14 @@ class DoctoraController extends Controller
         $doctora->save();
 
         if ($request->hasFile('avatar')) {
-            $imageService->uploadCustomName($request->file('avatar'), 'uploads/doctora', 'avatar.jpg', 800, 85);
+            try {
+                $imageService->uploadCustomName($request->file('avatar'), 'uploads/doctora', 'avatar.jpg', 800, 85);
+            } catch (\Throwable $e) {
+                // On Vercel the public filesystem is read-only; silently skip avatar write
+                \Illuminate\Support\Facades\Log::warning('Avatar upload skipped: ' . $e->getMessage());
+            }
         }
 
-        return redirect()->route('doctora.profile')->with('success', 'Perfil profesional actualizado correctamente.');
+        return $this->savedResponse($request, 'doctora.profile', 'Perfil profesional actualizado correctamente.');
     }
 }
