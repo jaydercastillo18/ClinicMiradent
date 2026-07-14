@@ -18,7 +18,7 @@ class DoctoraController extends Controller
      */
     public function config()
     {
-        $doctora = Auth::user()->doctora;
+        $doctora = Auth::user()->doctora ?? Doctora::first();
 
         // Parse working hours JSON, or set a default schedule
         $schedule = [];
@@ -51,7 +51,7 @@ class DoctoraController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $doctora = $user->doctora;
+        $doctora = $user->doctora ?? Doctora::first();
 
         // Update working hours
         if ($doctora) {
@@ -95,7 +95,7 @@ class DoctoraController extends Controller
      */
     public function profile()
     {
-        $doctora = Auth::user()->doctora;
+        $doctora = Auth::user()->doctora ?? Doctora::first();
         return view('doctora', compact('doctora'));
     }
 
@@ -116,8 +116,10 @@ class DoctoraController extends Controller
 
             // Update or Create Doctora profile
             if (!$doctora) {
-                $doctora = new Doctora();
-                $doctora->user_id = $user->id;
+                $doctora = Doctora::first() ?? new Doctora();
+                if (!$doctora->exists) {
+                    $doctora->user_id = $user->id;
+                }
             }
 
             $doctora->especialidad = $request->especialidad;
