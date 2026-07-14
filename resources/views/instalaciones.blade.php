@@ -107,7 +107,7 @@
                         <!-- Photo -->
                         <div style="height: 220px; overflow: hidden; background-color: #f8fafc; border-bottom: 1px solid var(--border-color);">
                             @if($instalacion->imagen_path)
-                                <img src="{{ image_url($instalacion->imagen_path) }}" class="w-100 h-100" style="object-fit: cover;" alt="Instalación" loading="lazy">
+                                <img src="{{ image_url($instalacion->imagen_path, '', 'instalacion', $instalacion->id) }}" class="w-100 h-100" style="object-fit: cover;" alt="Instalación" loading="lazy">
                             @else
                                 <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-white" style="background-color: #f2faf6; font-size: 0.85rem;">
                                     Sin foto
@@ -178,7 +178,7 @@
                                         <small class="text-muted">Deja en blanco si no deseas cambiar la foto actual.</small>
                                         @if($instalacion->imagen_path)
                                             <div class="mt-3 text-center">
-                                                <img src="{{ image_url($instalacion->imagen_path) }}" class="rounded shadow-sm" style="max-height: 120px; max-width: 100%; object-fit: cover;">
+                                                <img src="{{ image_url($instalacion->imagen_path, '', 'instalacion', $instalacion->id) }}" class="rounded shadow-sm" style="max-height: 120px; max-width: 100%; object-fit: cover;">
                                             </div>
                                         @endif
                                     </div>

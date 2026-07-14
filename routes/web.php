@@ -28,6 +28,10 @@ use App\Http\Controllers\FinanzasController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\PaymentSettingController;
+use App\Http\Controllers\ImageController;
+
+// Ruta ligera para servir imágenes desde base de datos / Vercel sin saturar el HTML
+Route::get('/img/{type}/{id}', [ImageController::class, 'show'])->name('image.show');
 
 // Web Pública (Landing Page & Secciones)
 Route::get('/', [PublicController::class, 'home'])->name('public.home');

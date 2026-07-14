@@ -33,7 +33,7 @@ class ServicioViewModel
         $categoryMeta = $this->categoryMeta($category);
 
         $this->id = (int) $servicio->id;
-        $this->image = image_url($servicio->imagen_path, '');
+        $this->image = image_url($servicio->imagen_path, '', 'servicio', $servicio->id);
         $this->image_style = $this->image ? 'height: 200px; width: 100%; overflow: hidden; position: relative; border-bottom: 1px solid var(--border-color);' : 'display:none;';
         $this->home_image_style = $this->image ? 'height: 160px; overflow: hidden; border-radius: 12px; margin-bottom: 1rem;' : 'display:none;';
         $this->name = $servicio->nombre ?? '';

@@ -55,10 +55,7 @@ class Doctora extends Model
     public function getAvatarUrlAttribute(): string
     {
         if (!empty($this->avatar)) {
-            if (str_starts_with($this->avatar, 'data:') || str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
-                return $this->avatar;
-            }
-            return asset($this->avatar);
+            return image_url($this->avatar, asset('images/avatar_placeholder.svg'), 'doctora', $this->id);
         }
 
         $avatarPath = 'uploads/doctora/avatar.jpg';

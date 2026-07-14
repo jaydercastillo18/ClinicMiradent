@@ -100,10 +100,10 @@
                              data-activo-val="{{ $servicio->activo }}"
                              data-created="{{ $servicio->created_at ? $servicio->created_at->format('d/m/Y H:i') : '' }}"
                              data-updated="{{ $servicio->updated_at ? $servicio->updated_at->format('d/m/Y H:i') : '' }}"
-                             data-imagen="{{ image_url($servicio->imagen_path, '') }}"
+                             data-imagen="{{ image_url($servicio->imagen_path, '', 'servicio', $servicio->id) }}"
                              style="height: 160px; overflow: hidden; cursor: pointer; border-bottom: 1px solid var(--border-color);">
                             @if($servicio->imagen_path)
-                                <img src="{{ image_url($servicio->imagen_path) }}" alt="{{ $servicio->nombre }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+                                <img src="{{ image_url($servicio->imagen_path, '', 'servicio', $servicio->id) }}" alt="{{ $servicio->nombre }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
                             @else
                                 <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, var(--primary-light), #e0f2fe); color: var(--primary);">
                                 </div>
@@ -190,7 +190,7 @@
                                 data-duracion="{{ $servicio->duracion_minutos }}"
                                 data-descripcion="{{ $servicio->descripcion }}"
                                 data-activo="{{ $servicio->activo }}"
-                                data-imagen="{{ $servicio->imagen_path ? asset($servicio->imagen_path) : '' }}"
+                                data-imagen="{{ image_url($servicio->imagen_path, '', 'servicio', $servicio->id) }}"
                                 style="border-radius: 8px; font-weight: 500;">
                                 <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
                                 Editar

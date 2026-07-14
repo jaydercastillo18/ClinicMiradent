@@ -19,8 +19,8 @@ class CasoExitoViewModel
     public function __construct(CasoExito $caso)
     {
         $this->id = (int) $caso->id;
-        $this->before_image = image_url($caso->antes_img, '');
-        $this->after_image = image_url($caso->despues_img, '');
+        $this->before_image = image_url($caso->antes_img, '', 'caso_antes', $caso->id);
+        $this->after_image = image_url($caso->despues_img, '', 'caso_despues', $caso->id);
         $this->title = $caso->titulo_tratamiento ?? '';
         $this->description = $caso->descripcion_resultado ?? '';
         $this->description_short = Str::limit($this->description, 70);
