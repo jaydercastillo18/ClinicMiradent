@@ -22,14 +22,7 @@ class ImageUploadService
      */
     public function upload(UploadedFile $file, string $directory, int $maxWidth = 1200, int $quality = 80): string
     {
-        $uploadPath = public_path($directory);
-
-        if (!File::isDirectory($uploadPath)) {
-            File::makeDirectory($uploadPath, 0755, true, true);
-        }
-
         $fileName = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.webp';
-
         return $this->uploadCustomName($file, $directory, $fileName, $maxWidth, $quality);
     }
 
@@ -41,24 +34,32 @@ class ImageUploadService
      * @param string $fileName Nombre de archivo completo (e.g. 'avatar.jpg')
      * @param int $maxWidth Ancho máximo al que se redimensionará
      * @param int $quality Calidad de compresión
-     * @return string Ruta relativa (e.g. 'uploads/doctora/avatar.jpg')
+     * @return string Ruta relativa o Data URI en base64 para persistencia en Vercel
      */
     public function uploadCustomName(UploadedFile $file, string $directory, string $fileName, int $maxWidth = 1200, int $quality = 80): string
     {
-        $uploadPath = public_path($directory);
-
-        if (!File::isDirectory($uploadPath)) {
-            File::makeDirectory($uploadPath, 0755, true, true);
-        }
-
         $format = Str::endsWith(strtolower($fileName), ['.jpg', '.jpeg']) ? Format::JPEG : Format::WEBP;
 
         $manager = new ImageManager(new Driver());
         $image = $manager->decode($file->getRealPath());
         $image->scaleDown(width: $maxWidth);
-        $image->encodeUsingFormat($format, $quality)->save($uploadPath . '/' . $fileName);
+        $encoded = $image->encodeUsingFormat($format, $quality);
 
-        return $directory . '/' . $fileName;
+        // Intentar guardar en disco local (para desarrollo o servidores clásicos)
+        try {
+            $uploadPath = public_path($directory);
+            if (!File::isDirectory($uploadPath)) {
+                File::makeDirectory($uploadPath, 0755, true, true);
+            }
+            $encoded->save($uploadPath . '/' . $fileName);
+        } catch (\Throwable $e) {
+            // En Vercel Serverless el sistema de archivos es de solo lectura, ignorar
+        }
+
+        // Devolver como Data URI base64 para que se guarde directamente en la base de datos MySQL/TiDB
+        // y esté accesible de forma permanente sin requerir S3 o almacenamiento de archivos.
+        $mime = $format === Format::JPEG ? 'image/jpeg' : 'image/webp';
+        return 'data:' . $mime . ';base64,' . base64_encode((string) $encoded);
     }
 
     /**

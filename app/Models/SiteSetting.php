@@ -30,6 +30,10 @@ class SiteSetting extends Model
             return null;
         }
 
+        if (\Illuminate\Support\Str::startsWith($path, ['data:', 'http://', 'https://'])) {
+            return $path;
+        }
+
         if (\Illuminate\Support\Str::startsWith($path, 'uploads/')) {
             return asset($path);
         }

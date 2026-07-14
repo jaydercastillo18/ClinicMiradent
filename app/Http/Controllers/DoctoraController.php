@@ -123,16 +123,11 @@ class DoctoraController extends Controller
         $doctora->COP = $request->COP;
         $doctora->telefono = $request->telefono;
         $doctora->bio = $request->bio;
-        $doctora->save();
-
         if ($request->hasFile('avatar')) {
-            try {
-                $imageService->uploadCustomName($request->file('avatar'), 'uploads/doctora', 'avatar.jpg', 800, 85);
-            } catch (\Throwable $e) {
-                // On Vercel the public filesystem is read-only; silently skip avatar write
-                \Illuminate\Support\Facades\Log::warning('Avatar upload skipped: ' . $e->getMessage());
-            }
+            $doctora->avatar = $imageService->uploadCustomName($request->file('avatar'), 'uploads/doctora', 'avatar.jpg', 800, 85);
         }
+
+        $doctora->save();
 
         return $this->savedResponse($request, 'doctora.profile', 'Perfil profesional actualizado correctamente.');
     }

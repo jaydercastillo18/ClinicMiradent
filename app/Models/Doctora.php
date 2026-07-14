@@ -21,6 +21,7 @@ class Doctora extends Model
         'COP',
         'telefono',
         'bio',
+        'avatar',
         'horario_atencion'
     ];
 
@@ -53,6 +54,13 @@ class Doctora extends Model
 
     public function getAvatarUrlAttribute(): string
     {
+        if (!empty($this->avatar)) {
+            if (str_starts_with($this->avatar, 'data:') || str_starts_with($this->avatar, 'http://') || str_starts_with($this->avatar, 'https://')) {
+                return $this->avatar;
+            }
+            return asset($this->avatar);
+        }
+
         $avatarPath = 'uploads/doctora/avatar.jpg';
         $absolutePath = public_path($avatarPath);
 
