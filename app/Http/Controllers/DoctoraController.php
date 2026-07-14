@@ -104,31 +104,42 @@ class DoctoraController extends Controller
      */
     public function updateProfile(DoctoraProfileRequest $request, ImageUploadService $imageService)
     {
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
-        $doctora = $user->doctora;
+        try {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+            $doctora = $user->doctora;
 
-        // Update User
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->save();
+            // Update User
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->save();
 
-        // Update or Create Doctora profile
-        if (!$doctora) {
-            $doctora = new Doctora();
-            $doctora->user_id = $user->id;
+            // Update or Create Doctora profile
+            if (!$doctora) {
+                $doctora = new Doctora();
+                $doctora->user_id = $user->id;
+            }
+
+            $doctora->especialidad = $request->especialidad;
+            $doctora->COP = $request->COP;
+            $doctora->telefono = $request->telefono;
+            $doctora->bio = $request->bio;
+            if ($request->hasFile('avatar')) {
+                $doctora->avatar = $imageService->uploadCustomName($request->file('avatar'), 'uploads/doctora', 'avatar.jpg', 800, 85);
+            }
+
+            $doctora->save();
+
+            return $this->savedResponse($request, 'doctora.profile', 'Perfil profesional actualizado correctamente.');
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error in DoctoraController@updateProfile: ' . $e->getMessage());
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al guardar: ' . $e->getMessage()
+                ], 500);
+            }
+            throw $e;
         }
-
-        $doctora->especialidad = $request->especialidad;
-        $doctora->COP = $request->COP;
-        $doctora->telefono = $request->telefono;
-        $doctora->bio = $request->bio;
-        if ($request->hasFile('avatar')) {
-            $doctora->avatar = $imageService->uploadCustomName($request->file('avatar'), 'uploads/doctora', 'avatar.jpg', 800, 85);
-        }
-
-        $doctora->save();
-
-        return $this->savedResponse($request, 'doctora.profile', 'Perfil profesional actualizado correctamente.');
     }
 }

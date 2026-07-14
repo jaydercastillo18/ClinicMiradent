@@ -38,28 +38,34 @@ class ImageUploadService
      */
     public function uploadCustomName(UploadedFile $file, string $directory, string $fileName, int $maxWidth = 1200, int $quality = 80): string
     {
-        $format = Str::endsWith(strtolower($fileName), ['.jpg', '.jpeg']) ? Format::JPEG : Format::WEBP;
-
-        $manager = new ImageManager(new Driver());
-        $image = $manager->decode($file->getRealPath());
-        $image->scaleDown(width: $maxWidth);
-        $encoded = $image->encodeUsingFormat($format, $quality);
-
-        // Intentar guardar en disco local (para desarrollo o servidores clásicos)
         try {
-            $uploadPath = public_path($directory);
-            if (!File::isDirectory($uploadPath)) {
-                File::makeDirectory($uploadPath, 0755, true, true);
-            }
-            $encoded->save($uploadPath . '/' . $fileName);
-        } catch (\Throwable $e) {
-            // En Vercel Serverless el sistema de archivos es de solo lectura, ignorar
-        }
+            $format = Str::endsWith(strtolower($fileName), ['.jpg', '.jpeg']) ? Format::JPEG : Format::WEBP;
 
-        // Devolver como Data URI base64 para que se guarde directamente en la base de datos MySQL/TiDB
-        // y esté accesible de forma permanente sin requerir S3 o almacenamiento de archivos.
-        $mime = $format === Format::JPEG ? 'image/jpeg' : 'image/webp';
-        return 'data:' . $mime . ';base64,' . base64_encode((string) $encoded);
+            $manager = new ImageManager(new Driver());
+            $image = $manager->decode($file->getRealPath());
+            $image->scaleDown(width: $maxWidth);
+            $encoded = $image->encodeUsingFormat($format, $quality);
+
+            // Intentar guardar en disco local (para desarrollo o servidores clásicos)
+            try {
+                $uploadPath = public_path($directory);
+                if (!File::isDirectory($uploadPath)) {
+                    File::makeDirectory($uploadPath, 0755, true, true);
+                }
+                $encoded->save($uploadPath . '/' . $fileName);
+            } catch (\Throwable $e) {
+                // En Vercel Serverless el sistema de archivos es de solo lectura, ignorar
+            }
+
+            // Devolver como Data URI base64 para que se guarde directamente en la base de datos MySQL/TiDB
+            $mime = $format === Format::JPEG ? 'image/jpeg' : 'image/webp';
+            return 'data:' . $mime . ';base64,' . base64_encode((string) $encoded);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Intervention Image falló, usando base64 directo: ' . $e->getMessage());
+            $content = file_get_contents($file->getRealPath());
+            $mime = $file->getMimeType() ?: 'image/jpeg';
+            return 'data:' . $mime . ';base64,' . base64_encode($content);
+        }
     }
 
     /**
