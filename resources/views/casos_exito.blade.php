@@ -108,7 +108,7 @@
                             <!-- Antes -->
                             <div class="w-50 position-relative border-end" style="border-color: var(--border-color) !important;">
                                 @if($caso->antes_img)
-                                    <img src="{{ asset($caso->antes_img) }}" class="w-100 h-100" style="object-fit: cover;" alt="Antes" loading="lazy">
+                                    <img src="{{ image_url($caso->antes_img) }}" class="w-100 h-100" style="object-fit: cover;" alt="Antes" loading="lazy">
                                 @else
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-white" style="background-color: #f2faf6; font-size: 0.85rem;">
                                         Sin foto Antes
@@ -119,7 +119,7 @@
                             <!-- Después -->
                             <div class="w-50 position-relative">
                                 @if($caso->despues_img)
-                                    <img src="{{ asset($caso->despues_img) }}" class="w-100 h-100" style="object-fit: cover;" alt="Después" loading="lazy">
+                                    <img src="{{ image_url($caso->despues_img) }}" class="w-100 h-100" style="object-fit: cover;" alt="Después" loading="lazy">
                                 @else
                                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-white" style="background-color: #f2faf6; font-size: 0.85rem;">
                                         Sin foto Después
@@ -186,7 +186,7 @@
                                             <input type="file" name="antes" class="form-control" style="font-size: 0.8rem; border-radius: 8px;">
                                             @if($caso->antes_img)
                                                 <div class="mt-2 text-center">
-                                                    <img src="{{ asset($caso->antes_img) }}" class="rounded shadow-sm" style="max-height: 80px; max-width: 100%; object-fit: cover;">
+                                                    <img src="{{ image_url($caso->antes_img) }}" class="rounded shadow-sm" style="max-height: 80px; max-width: 100%; object-fit: cover;">
                                                 </div>
                                             @endif
                                         </div>
@@ -195,7 +195,7 @@
                                             <input type="file" name="despues" class="form-control" style="font-size: 0.8rem; border-radius: 8px;">
                                             @if($caso->despues_img)
                                                 <div class="mt-2 text-center">
-                                                    <img src="{{ asset($caso->despues_img) }}" class="rounded shadow-sm" style="max-height: 80px; max-width: 100%; object-fit: cover;">
+                                                    <img src="{{ image_url($caso->despues_img) }}" class="rounded shadow-sm" style="max-height: 80px; max-width: 100%; object-fit: cover;">
                                                 </div>
                                             @endif
                                         </div>

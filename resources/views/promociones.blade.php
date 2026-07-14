@@ -113,7 +113,7 @@
                 <!-- Header banner image -->
                 <div class="position-relative" style="height: 180px; overflow: hidden; background-color: #f8fafc;">
                     @if($promo->imagen_path)
-                    <img src="{{ asset($promo->imagen_path) }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ $promo->titulo }}" loading="lazy">
+                    <img src="{{ image_url($promo->imagen_path) }}" class="w-100 h-100" style="object-fit: cover;" alt="{{ $promo->titulo }}" loading="lazy">
                     @else
                     <div class="w-100 h-100 d-flex align-items-center justify-content-center text-white" style="background: linear-gradient(135deg, var(--primary) 0%, #1b5c3a 100%);">
                         <i data-lucide="gift" style="width: 48px; height: 48px; opacity: 0.7;"></i>
@@ -181,7 +181,7 @@
                             data-fecha-inicio="{{ $promo->fecha_inicio }}"
                             data-fecha-fin="{{ $promo->fecha_fin }}"
                             data-activo="{{ $promo->activo }}"
-                            data-imagen="{{ $promo->imagen_path ? asset($promo->imagen_path) : '' }}"
+                            data-imagen="{{ image_url($promo->imagen_path, '') }}"
                             title="Editar Campaña">
                             <i data-lucide="edit-3" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
                         </button>

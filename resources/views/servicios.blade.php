@@ -100,10 +100,10 @@
                              data-activo-val="{{ $servicio->activo }}"
                              data-created="{{ $servicio->created_at ? $servicio->created_at->format('d/m/Y H:i') : '' }}"
                              data-updated="{{ $servicio->updated_at ? $servicio->updated_at->format('d/m/Y H:i') : '' }}"
-                             data-imagen="{{ $servicio->imagen_path ? asset($servicio->imagen_path) : '' }}"
+                             data-imagen="{{ image_url($servicio->imagen_path, '') }}"
                              style="height: 160px; overflow: hidden; cursor: pointer; border-bottom: 1px solid var(--border-color);">
                             @if($servicio->imagen_path)
-                                <img src="{{ asset($servicio->imagen_path) }}" alt="{{ $servicio->nombre }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+                                <img src="{{ image_url($servicio->imagen_path) }}" alt="{{ $servicio->nombre }}" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
                             @else
                                 <div class="w-100 h-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, var(--primary-light), #e0f2fe); color: var(--primary);">
                                 </div>

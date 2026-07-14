@@ -107,7 +107,7 @@
                         <!-- Photo -->
                         <div style="height: 220px; overflow: hidden; background-color: #f8fafc; border-bottom: 1px solid var(--border-color);">
                             @if($instalacion->imagen_path)
-                                <img src="{{ asset($instalacion->imagen_path) }}" class="w-100 h-100" style="object-fit: cover;" alt="Instalación" loading="lazy">
+                                <img src="{{ image_url($instalacion->imagen_path) }}" class="w-100 h-100" style="object-fit: cover;" alt="Instalación" loading="lazy">
                             @else
                                 <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-white" style="background-color: #f2faf6; font-size: 0.85rem;">
                                     Sin foto
@@ -115,22 +115,35 @@
                             @endif
                         </div>
 
-                        <!-- Card Body -->
+                        <!-- Card Content -->
                         <div class="card-body p-4 d-flex flex-column">
-                            <h5 class="fw-bold mb-3 text-slate-800 text-center" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">
-                                {{ $instalacion->titulo ?? 'Sin título' }}
+                            <h5 class="fw-bold mb-1 text-slate-800" style="font-family: 'Outfit', sans-serif; font-size: 1.1rem;">
+                                {{ $instalacion->titulo ?: 'Instalación Miradent' }}
                             </h5>
-                            
-                            <!-- Actions -->
-                            <div class="d-flex align-items-center gap-2 border-top border-light-subtle pt-3 mt-auto">
-                                <button type="button" class="btn btn-light border flex-grow-1 d-flex align-items-center justify-content-center gap-2" 
-                                    data-ui-toggle="modal" data-ui-target="#editInstalacionModal{{ $instalacion->id }}" style="height: 38px; border-radius: 8px; font-weight: 500; font-size: 0.85rem; color: var(--text-main); background-color: #f8fafc;">
-                                    <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i> Editar
-                                </button>
-                                <button type="button" class="btn btn-light border text-danger d-flex align-items-center justify-content-center" 
-                                    data-ui-toggle="modal" data-ui-target="#deleteInstalacionModal{{ $instalacion->id }}" style="height: 38px; width: 38px; border-radius: 8px; background-color: #fef2f2; border-color: #fecaca !important;" title="Eliminar Foto">
-                                    <i data-lucide="trash-2" style="width: 14px; height: 14px; color: #dc2626;"></i>
-                                </button>
+                            <div class="d-flex align-items-center justify-content-between mt-4 pt-3 border-top" style="border-color: #f1f5f9 !important;">
+                                <div class="form-check form-switch p-0 m-0 d-flex align-items-center gap-2">
+                                    <form action="{{ route('instalaciones.update', $instalacion->id) }}" method="POST" class="d-inline" data-axios-submit data-axios-refresh="true">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="titulo" value="{{ $instalacion->titulo }}">
+                                        <input type="hidden" name="orden" value="{{ $instalacion->orden }}">
+                                        <input type="hidden" name="activo" value="{{ $instalacion->activo ? 0 : 1 }}">
+                                        <input class="form-check-input m-0" type="checkbox" role="switch" onchange="this.form.requestSubmit()" {{ $instalacion->activo ? 'checked' : '' }} style="cursor: pointer; width: 36px; height: 20px;">
+                                    </form>
+                                    <span class="fw-semibold text-slate-600" style="font-size: 0.8rem;">
+                                        {{ $instalacion->activo ? 'Visible' : 'Oculto' }}
+                                    </span>
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button type="button" class="btn btn-light border p-2 d-flex align-items-center justify-content-center" 
+                                        data-ui-toggle="modal" data-ui-target="#editInstalacionModal{{ $instalacion->id }}" style="height: 38px; width: 38px; border-radius: 8px;" title="Editar Foto">
+                                        <i data-lucide="edit-3" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-light border text-danger d-flex align-items-center justify-content-center" 
+                                        data-ui-toggle="modal" data-ui-target="#deleteInstalacionModal{{ $instalacion->id }}" style="height: 38px; width: 38px; border-radius: 8px; background-color: #fef2f2; border-color: #fecaca !important;" title="Eliminar Foto">
+                                        <i data-lucide="trash-2" style="width: 14px; height: 14px; color: #dc2626;"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -165,7 +178,7 @@
                                         <small class="text-muted">Deja en blanco si no deseas cambiar la foto actual.</small>
                                         @if($instalacion->imagen_path)
                                             <div class="mt-3 text-center">
-                                                <img src="{{ asset($instalacion->imagen_path) }}" class="rounded shadow-sm" style="max-height: 120px; max-width: 100%; object-fit: cover;">
+                                                <img src="{{ image_url($instalacion->imagen_path) }}" class="rounded shadow-sm" style="max-height: 120px; max-width: 100%; object-fit: cover;">
                                             </div>
                                         @endif
                                     </div>

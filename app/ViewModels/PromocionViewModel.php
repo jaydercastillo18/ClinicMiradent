@@ -34,7 +34,7 @@ class PromocionViewModel
         $status = $this->status($promocion);
 
         $this->id = (int) $promocion->id;
-        $this->image = $promocion->imagen_path ? asset($promocion->imagen_path) : '';
+        $this->image = image_url($promocion->imagen_path, '');
         $this->image_style = $this->image ? '' : 'display:none;';
         $this->card_class = $this->image ? 'has-img' : 'no-img';
         $this->content_style = $this->image ? 'padding: 1.5rem;' : '';

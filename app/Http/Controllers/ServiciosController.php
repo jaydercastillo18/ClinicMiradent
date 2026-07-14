@@ -136,7 +136,7 @@ class ServiciosController extends Controller
             'categoria' => $servicio->categoria,
             'activo' => (bool) $servicio->activo,
             'estado_label' => $servicio->activo ? 'Activo' : 'Inactivo',
-            'imagen_url' => $servicio->imagen_path ? asset($servicio->imagen_path) : null,
+            'imagen_url' => image_url($servicio->imagen_path),
             'creado' => $servicio->created_at?->format('d/m/Y H:i'),
             'actualizado' => $servicio->updated_at?->format('d/m/Y H:i'),
         ];

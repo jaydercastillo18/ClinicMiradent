@@ -120,7 +120,7 @@ class PromocionesController extends Controller
             'fecha_fin' => $promocion->fecha_fin?->format('Y-m-d'),
             'activo' => (bool) $promocion->activo,
             'estado_label' => $promocion->activo ? 'Activa' : 'Inactiva',
-            'imagen_url' => $promocion->imagen_path ? asset($promocion->imagen_path) : null,
+            'imagen_url' => image_url($promocion->imagen_path),
             'creado' => $promocion->created_at?->format('d/m/Y H:i'),
         ];
     }

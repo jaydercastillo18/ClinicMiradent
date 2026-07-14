@@ -117,7 +117,7 @@ class InstalacionController extends Controller
             'id' => $instalacion->id,
             'titulo' => $instalacion->titulo,
             'orden' => $instalacion->orden,
-            'imagen_url' => $instalacion->imagen_path ? asset($instalacion->imagen_path) : null,
+            'imagen_url' => image_url($instalacion->imagen_path),
             'activo' => (bool) $instalacion->activo,
             'estado_label' => $instalacion->activo ? 'Visible' : 'Oculto',
             'creado' => $instalacion->created_at?->format('d/m/Y H:i'),
