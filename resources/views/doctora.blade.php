@@ -221,18 +221,27 @@
 
 @section('scripts')
 <script>
-    // Preview image on local browser selection
     function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function() {
-            const output = document.getElementById('avatarPreview');
-            output.src = reader.result;
+        const file = event.target.files[0];
+        if (!file) return;
 
-            // Sync selected file to the main form's hidden input
-            const mainHiddenInput = document.getElementById('avatarHiddenInput');
-            mainHiddenInput.files = event.target.files;
+        // Show preview instantly
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            document.getElementById('avatarPreview').src = e.target.result;
         };
-        reader.readAsDataURL(event.target.files[0]);
+        reader.readAsDataURL(file);
+
+        // Sync the selected file to the main form's hidden input
+        try {
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            document.getElementById('avatarHiddenInput').files = dt.files;
+        } catch (_) {
+            // DataTransfer not supported — admin.js compression will still work
+            // because it reads from FormData which includes the card form's input
+        }
     }
 </script>
 @endsection
+

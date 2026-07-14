@@ -330,6 +330,64 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
+// ─── Global image compression (keeps uploads under Vercel's 4.5 MB limit) ────
+const IMG_MAX_WIDTH   = 1200;  // px
+const IMG_JPEG_QUALITY = 0.82; // 82%
+
+function compressImageFile(file) {
+    return new Promise((resolve) => {
+        if (!file.type.startsWith('image/') || file.size === 0) {
+            resolve(file);
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                let width  = img.width;
+                let height = img.height;
+
+                if (width > IMG_MAX_WIDTH) {
+                    height = Math.round(height * IMG_MAX_WIDTH / width);
+                    width  = IMG_MAX_WIDTH;
+                }
+
+                const canvas = document.createElement('canvas');
+                canvas.width  = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+
+                canvas.toBlob(function (blob) {
+                    const baseName = file.name.replace(/\.[^/.]+$/, '');
+                    resolve(new File([blob], baseName + '.jpg', { type: 'image/jpeg' }));
+                }, 'image/jpeg', IMG_JPEG_QUALITY);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+async function buildCompressedFormData(form) {
+    const raw = new FormData(form);
+    const out = new FormData();
+    const jobs = [];
+
+    for (const [key, value] of raw.entries()) {
+        if (value instanceof File && value.size > 0 && value.type.startsWith('image/')) {
+            jobs.push(compressImageFile(value).then((compressed) => ({ key, value: compressed })));
+        } else {
+            out.append(key, value);
+        }
+    }
+
+    const results = await Promise.all(jobs);
+    results.forEach(({ key, value }) => out.append(key, value));
+    return out;
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function submitAxiosForm(form) {
     if (form.dataset.axiosSubmitting === 'true') {
         return;
@@ -340,7 +398,8 @@ async function submitAxiosForm(form) {
     clearValidationErrors(form);
 
     try {
-        const response = await axios.post(form.action, new FormData(form));
+        const formData = await buildCompressedFormData(form);
+        const response = await axios.post(form.action, formData);
         
         // Evitar que el sistema parezca que funcionó si el backend devuelve success: false con status 200
         if (response.data && response.data.success === false) {
