@@ -270,7 +270,6 @@
         box-shadow: 0 12px 30px rgba(0, 84, 66, 0.15);
         border: 1px solid rgba(255, 255, 255, 0.9);
         z-index: 10;
-        animation: floatBadge 4s ease-in-out infinite;
     }
 
     .home-floating-badge i {
@@ -1201,7 +1200,8 @@
 
     @media (max-width: 640px) {
         .home-hero {
-            padding-top: 88px;
+            min-height: 0;
+            padding: 56px 0 36px;
         }
 
         .home-title {
@@ -1217,7 +1217,7 @@
         }
 
         .home-portrait {
-            min-height: 360px;
+            min-height: 300px;
         }
 
         .home-status-card {
@@ -1334,7 +1334,7 @@ $homePopupImage = $popupPromo?->image ?: $heroImage;
             <div class="home-visual">
                 <div class="home-portrait">
                     @if($heroImage)
-                    <img src="{{ $heroImage }}" alt="Miradent atención dental premium">
+                    <img src="{{ $heroImage }}" alt="Miradent atención dental premium" width="900" height="1100" fetchpriority="high">
                     @else
                     <div class="home-portrait-fallback">
                         <img src="{{ $publicAssets->logo }}" alt="Miradent">
@@ -1480,7 +1480,7 @@ $homePopupImage = $popupPromo?->image ?: $heroImage;
                 <article class="home-card home-service-card fade-up">
                     <div class="home-service-media">
                         @if($servicio->image)
-                        <img src="{{ $servicio->image }}" alt="{{ $servicio->name }}" loading="lazy">
+                        <img src="{{ $servicio->image }}" alt="{{ $servicio->name }}" width="720" height="440" loading="lazy">
                         @else
                         <div class="home-portrait-fallback">
                             <i data-lucide="{{ $servicio->category_icon }}" style="width:64px;height:64px;"></i>

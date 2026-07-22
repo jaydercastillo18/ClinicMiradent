@@ -9,12 +9,8 @@
     <meta name="description" content="Clínica Dental Miradent en Chimbote. Tratamientos de ortodoncia, blanqueamiento, implantes, limpiezas y estética dental. Agenda tu cita hoy mismo.">
     <meta name="keywords" content="dentista chimbote, clínica dental chimbote, ortodoncia chimbote, implantes dentales, blanqueamiento dental">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Outfit:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
-
-    <script src="https://unpkg.com/lucide@latest" defer></script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://unpkg.com/lucide@latest" defer fetchpriority="low"></script>
+    @vite('resources/css/app.css')
 
     @yield('styles')
 
@@ -704,21 +700,6 @@
             });
         }
 
-        // Fade-up animation
-        const fadeObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    fadeObserver.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.14
-        });
-        setTimeout(() => {
-            document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
-        }, 120);
-
         // === MODERN SERVICE MODAL ===
         let currentModal = null;
 
@@ -784,7 +765,9 @@
         window.openMiradentService = openServiceModal;
 
         // Re-init icons after yield content
-        document.addEventListener('DOMContentLoaded', initIcons);
+        document.addEventListener('DOMContentLoaded', () => {
+            (window.requestIdleCallback || window.setTimeout)(initIcons, 0);
+        });
     </script>
 
     @yield('scripts')

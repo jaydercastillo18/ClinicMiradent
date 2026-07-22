@@ -285,6 +285,7 @@
 @endsection
 
 @section('scripts')
+@vite('resources/js/app.js')
 <script>
     function selectChoice(choice) {
         document.querySelectorAll('.choice-card').forEach(c => c.classList.remove('selected'));
