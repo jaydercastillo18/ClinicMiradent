@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Policies\PatientPolicy;
@@ -35,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         \Illuminate\Support\Facades\URL::forceScheme('https');
+        Vite::createAssetPathsUsing(fn (string $path): string => '/'.ltrim($path, '/'));
         Paginator::useTailwind();
 
         RateLimiter::for('global', function (Request $request) {
